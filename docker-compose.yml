@@ -1,0 +1,26 @@
+services:
+  ntp:
+    image: ghcr.io/wh0else/chrony:latest
+    container_name: ntp
+    volumes:
+      - /usr/local/share/ca-certificates/sovik-root-ca.crt:/etc/ssl/certs/753f4e20.0:ro
+    networks:
+      - inet6
+    cap_add:
+      - SYS_TIME
+    environment:
+      NTP_SERVERS: "no.pool.ntp.org"
+      TZ: "Europe/Oslo"
+      ENABLE_SYSCLK: "true"
+    ports:
+      - 123:123/udp
+    restart: unless-stopped
+
+networks:
+  inet6:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: "2001:67c:228c:100::/64"
