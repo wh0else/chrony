@@ -12,6 +12,7 @@ services:
       NTP_SERVERS: "no.pool.ntp.org"
       TZ: "Europe/Oslo"
       ENABLE_SYSCLK: "true"
+      NTP_DIRECTIVES: ${NTP_DIRECTIVES}
     ports:
       - 123:123/udp
     restart: unless-stopped
