@@ -14,11 +14,13 @@ if [ -n "${TZ:-}" ] && [ -f "/usr/share/zoneinfo/${TZ}" ]; then
 fi
 
 mkdir -p /etc/chrony /run/chrony /var/lib/chrony
-# chronyd requires /run/chrony to stay root-owned (it manages the command
-# socket's permissions itself after binding) - chowning it to chrony causes
-# chronyd to silently disable the socket, which then makes chronyc fall back
-# to the legacy UDP control protocol and get rejected with "501 Not authorised"
-chown chrony:chrony /var/lib/chrony
+chown chrony:chrony /run/chrony /var/lib/chrony
+# chronyd's cmdmon socket directory check rejects world-readable/executable
+# permissions - Alpine's chrony package leaves it at 0755, which chronyd treats
+# as "Wrong permissions" and silently disables the command socket, which then
+# makes chronyc fall back to the legacy UDP control protocol and get rejected
+# with "501 Not authorised". It wants no access for "other".
+chmod 750 /run/chrony
 
 # --- Generate chrony.conf from env vars ---------------------------------
 {
