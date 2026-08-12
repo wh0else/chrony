@@ -14,7 +14,11 @@ if [ -n "${TZ:-}" ] && [ -f "/usr/share/zoneinfo/${TZ}" ]; then
 fi
 
 mkdir -p /etc/chrony /run/chrony /var/lib/chrony
-chown -R chrony:chrony /run/chrony /var/lib/chrony
+# chronyd requires /run/chrony to stay root-owned (it manages the command
+# socket's permissions itself after binding) - chowning it to chrony causes
+# chronyd to silently disable the socket, which then makes chronyc fall back
+# to the legacy UDP control protocol and get rejected with "501 Not authorised"
+chown chrony:chrony /var/lib/chrony
 
 # --- Generate chrony.conf from env vars ---------------------------------
 {
