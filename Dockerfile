@@ -1,4 +1,4 @@
-FROM alpine:edge
+FROM alpine:3.24
 
 # chrony    - chronyd + chronyc
 # tzdata    - so TZ env var actually does something
